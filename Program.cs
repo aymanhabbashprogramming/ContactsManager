@@ -259,7 +259,40 @@ namespace ContactsManager
 
         }
 
+        static string GetFirstName(int Contact_ID)
+        {
+            string UserFirstName = "";
+            SqlConnection connection= new SqlConnection(connectionString);
+            string query = "Select FirstName from Contacts Where ContactID = @Contact_ID";
 
+            SqlCommand command= new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("Contact_ID", Contact_ID);
+
+            try
+            {
+                connection.Open();
+                object result = command.ExecuteScalar();
+
+                if (result!= null)
+                {
+                    UserFirstName = result.ToString();
+                }
+                else
+                {
+                    UserFirstName = "";
+                }
+
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error Details: {ex.Message}");
+            }
+
+            return UserFirstName;
+
+        }
 
         static void Main(string[] args)
         {
@@ -269,7 +302,9 @@ namespace ContactsManager
             //PrintAllContactsWithFirstNameAndCountry("mohammad", 1);
             //SearchContactsStartsWith("D");
             //SearchContactsEndsWith("d");
-            SearchContactsContains("i");
+            //SearchContactsContains("i");
+            Console.WriteLine(GetFirstName(1));
+
         }
     }
 }
