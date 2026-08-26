@@ -294,6 +294,60 @@ namespace ContactsManager
 
         }
 
+        public struct stContact
+        {
+            public int ID { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
+            public string Phone { get; set; }
+            public string Address { get; set; }
+            public int CountryID { get; set; }
+        }
+
+        static bool FindContactByID(int Contact_ID, ref stContact ContactInfo)
+        {
+            bool isFound = false;
+            SqlConnection connection = new SqlConnection(connectionString);
+            string query = "select * from Contacts where ContactID = @Contact_ID";
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("Contact_ID", Contact_ID);
+
+            try
+            {
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    // The record was found
+                    isFound = true;
+                    ContactInfo.ID = (int)reader["ContactID"];
+                    ContactInfo.FirstName = (string)reader["FirstName"];
+                    ContactInfo.LastName = (string)reader["LastName"];
+                    ContactInfo.Email = (string)reader["Email"];
+                    ContactInfo.Phone = (string)reader["Phone"];
+                    ContactInfo.Address = (string)reader["Address"];
+                    ContactInfo.CountryID = (int)reader["CountryID"];
+                }
+                else
+                {
+                    isFound= false;
+                }
+
+                connection.Close();
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+           
+            return isFound;
+        }
+
         static void Main(string[] args)
         {
 
@@ -303,8 +357,22 @@ namespace ContactsManager
             //SearchContactsStartsWith("D");
             //SearchContactsEndsWith("d");
             //SearchContactsContains("i");
-            Console.WriteLine(GetFirstName(1));
+           // Console.WriteLine(GetFirstName(1));
 
+            stContact ContactInfo = new stContact();
+            if (FindContactByID(1,ref ContactInfo))
+            {
+                Console.WriteLine($"\nContact ID: {ContactInfo.ID}");
+                Console.WriteLine($"Name: {ContactInfo.FirstName} {ContactInfo.LastName}");
+                Console.WriteLine($"Email: {ContactInfo.Email}");
+                Console.WriteLine($"Phone: {ContactInfo.Phone}");
+                Console.WriteLine($"Address: {ContactInfo.Address}");
+                Console.WriteLine($"Country ID: {ContactInfo.CountryID}");
+            }
+            else
+            {
+                Console.WriteLine("Contact Not Found!");
+            }
         }
     }
 }
