@@ -9,7 +9,6 @@ namespace ContactsManager
     internal class Program
     {
         static string connectionString = "Server=.;Database=ContactsDB;User Id=sa;Password=123456;";
-
         static void PrintAllContacts()
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -47,7 +46,6 @@ namespace ContactsManager
                 Console.WriteLine($"Error Details: {ex.Message}");
             }
         }
-
         static void PrintAllContactsWithFirstName(string firstName)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -89,7 +87,6 @@ namespace ContactsManager
 
 
         }
-
         static void PrintAllContactsWithFirstNameAndCountry(string firstName,int Country_ID)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -132,7 +129,6 @@ namespace ContactsManager
 
 
         }
-
         static void SearchContactsStartsWith(string StartsWith)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -174,7 +170,6 @@ namespace ContactsManager
 
 
         }
-
         static void SearchContactsEndsWith(string EndsWith)
             {
                 SqlConnection connection = new SqlConnection(connectionString);
@@ -216,7 +211,6 @@ namespace ContactsManager
 
 
             }
-
         static void SearchContactsContains(string Contains)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -258,7 +252,6 @@ namespace ContactsManager
 
 
         }
-
         static string GetFirstName(int Contact_ID)
         {
             string UserFirstName = "";
@@ -293,7 +286,6 @@ namespace ContactsManager
             return UserFirstName;
 
         }
-
         public struct stContact
         {
             public int ID { get; set; }
@@ -304,7 +296,6 @@ namespace ContactsManager
             public string Address { get; set; }
             public int CountryID { get; set; }
         }
-
         static bool FindContactByID(int Contact_ID, ref stContact ContactInfo)
         {
             bool isFound = false;
@@ -347,6 +338,41 @@ namespace ContactsManager
            
             return isFound;
         }
+        static void AddNewContact(stContact ContactInfo)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = @"INSERT INTO Contacts
+                        ([FirstName], [LastName], [Email], [Phone], [Address], [CountryID])
+                        VALUES (@firstName, @lastName, @email, @phoneNumber, @address, @country_id)";
+
+                SqlCommand command = new SqlCommand(query, connection);
+
+                command.Parameters.AddWithValue("@firstName", ContactInfo.FirstName);
+                command.Parameters.AddWithValue("@lastName", ContactInfo.LastName);
+                command.Parameters.AddWithValue("@email", ContactInfo.Email);
+                command.Parameters.AddWithValue("@phoneNumber", ContactInfo.Phone);
+                command.Parameters.AddWithValue("@address", ContactInfo.Address);
+                command.Parameters.AddWithValue("@country_id", ContactInfo.CountryID);
+
+                try
+                {
+                    connection.Open();
+
+                    int RowsAffected = command.ExecuteNonQuery();
+
+                    if (RowsAffected > 0)
+                        Console.WriteLine("Record Inserted Successfully");
+                    else
+                        Console.WriteLine("Record Insertion Failed");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
 
         static void Main(string[] args)
         {
@@ -359,7 +385,7 @@ namespace ContactsManager
             //SearchContactsContains("i");
            // Console.WriteLine(GetFirstName(1));
 
-            stContact ContactInfo = new stContact();
+          /*  stContact ContactInfo = new stContact();
             if (FindContactByID(1,ref ContactInfo))
             {
                 Console.WriteLine($"\nContact ID: {ContactInfo.ID}");
@@ -373,6 +399,20 @@ namespace ContactsManager
             {
                 Console.WriteLine("Contact Not Found!");
             }
+          */
+
+            stContact contactInfo = new stContact();
+
+            contactInfo.ID = 1;
+            contactInfo.FirstName = "Ayman";
+            contactInfo.LastName = "Ahmad";
+            contactInfo.Email = "ayman.ahmad@gmail.com";
+            contactInfo.Phone = "05551234567";
+            contactInfo.Address = "Selcuklu, Konya, Turkiye";
+            contactInfo.CountryID = 5;
+
+            AddNewContact(contactInfo);
+
         }
     }
 }
