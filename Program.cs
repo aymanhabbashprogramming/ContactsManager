@@ -487,6 +487,36 @@ namespace ContactsManager
             connection.Close();
         }
 
+        static void DeleteContacts(string ContactIDs)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            string query = @"DELETE FROM [Contacts] WHERE ContactID in ( "+ContactIDs+")";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            try
+            {
+                connection.Open();
+                int RowsAffected = command.ExecuteNonQuery();
+
+                if (RowsAffected > 0)
+                {
+                    Console.WriteLine("Contact deleted successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Contact not found. Deletion failed.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while deleting the contact: {ex.Message}");
+            }
+            connection.Close();
+        }
+
+
         static void Main(string[] args)
         {
 
@@ -549,9 +579,9 @@ namespace ContactsManager
             UpdateContact(18, contactInfo);
           */
 
-            DeleteContact(18);
+            // DeleteContact(18);
 
-
+            DeleteContacts("9,11");
 
         }
     }
