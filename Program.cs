@@ -372,7 +372,6 @@ namespace ContactsManager
                 }
             }
         }
-
         static void AddNewContactAndGetID(stContact ContactInfo)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -410,6 +409,51 @@ namespace ContactsManager
 
                 connection.Close();
             }
+        }
+        static void UpdateContact(int ContactID,stContact ContactInfo)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            string query = @"UPDATE Contacts  
+                            SET 
+                                 [FirstName] = @FirstName,
+                                 [LastName] = @LastName,
+                                 [Email] = @Email ,
+                                 [Phone] = @Phone,
+                                 [Address] = @Address,
+                                 [CountryID] = @CountryID
+                                 WHERE ContactID = @ContactID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@ContactID", ContactID);
+            command.Parameters.AddWithValue("@FirstName", ContactInfo.FirstName);
+            command.Parameters.AddWithValue("@LastName", ContactInfo.LastName);
+            command.Parameters.AddWithValue("@Email", ContactInfo.Email);
+            command.Parameters.AddWithValue("@Phone", ContactInfo.Phone);
+            command.Parameters.AddWithValue("@Address", ContactInfo.Address);
+            command.Parameters.AddWithValue("@CountryID", ContactInfo.CountryID);
+
+            try
+            {
+                connection.Open();
+
+                int RowsAffected = command.ExecuteNonQuery();
+                if (RowsAffected> 0)
+                {
+                    Console.WriteLine("Contact updated successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Contact not found. Update failed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while updating the contact: {ex.Message}");
+            }
+            connection.Close ();
+
+
         }
 
 
@@ -455,14 +499,24 @@ namespace ContactsManager
 
           stContact contactInfo = new stContact();
 
-            contactInfo.FirstName = "Omar";
-            contactInfo.LastName = "Khaled";
-            contactInfo.Email = "omar.khaled@gmail.com";
-            contactInfo.Phone = "05321234567";
-            contactInfo.Address = "Meram, Konya, Turkiye";
-            contactInfo.CountryID = 1;
+            /*  contactInfo.FirstName = "Omar";
+              contactInfo.LastName = "Khaled";
+              contactInfo.Email = "omar.khaled@gmail.com";
+              contactInfo.Phone = "05321234567";
+              contactInfo.Address = "Meram, Konya, Turkiye";
+              contactInfo.CountryID = 1;
 
-            AddNewContactAndGetID(contactInfo);
+              AddNewContactAndGetID(contactInfo);
+            */
+
+            contactInfo.FirstName = "Ali";
+            contactInfo.LastName = "Megas";
+            contactInfo.Email = "Max@Gmail.com";
+            contactInfo.Address = "US";
+            contactInfo.Phone = "1021588777";
+            contactInfo.CountryID = 3;
+
+            UpdateContact(18, contactInfo);
 
         }
     }
