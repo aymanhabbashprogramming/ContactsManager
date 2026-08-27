@@ -455,7 +455,6 @@ namespace ContactsManager
 
 
         }
-
         static void DeleteContact(int ContactID)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -486,7 +485,6 @@ namespace ContactsManager
             }
             connection.Close();
         }
-
         static void DeleteContacts(string ContactIDs)
         {
             SqlConnection connection = new SqlConnection(connectionString);
@@ -515,74 +513,309 @@ namespace ContactsManager
             }
             connection.Close();
         }
+        static stContact ReadContactInfo()
+        {
+            stContact contactInfo = new stContact();
 
+            Console.Write("First Name: ");
+            contactInfo.FirstName = Console.ReadLine();
 
+            Console.Write("Last Name: ");
+            contactInfo.LastName = Console.ReadLine();
+
+            Console.Write("Email: ");
+            contactInfo.Email = Console.ReadLine();
+
+            Console.Write("Phone: ");
+            contactInfo.Phone = Console.ReadLine();
+
+            Console.Write("Address: ");
+            contactInfo.Address = Console.ReadLine();
+
+            Console.Write("Country ID: ");
+            contactInfo.CountryID = Convert.ToInt32(Console.ReadLine());
+
+            return contactInfo;
+        }
+        static void PrintContactInfo(stContact ContactInfo)
+        {    
+            Console.WriteLine($"\nContact ID: {ContactInfo.ID}");
+            Console.WriteLine($"Name: {ContactInfo.FirstName} {ContactInfo.LastName}");
+            Console.WriteLine($"Email: {ContactInfo.Email}");
+            Console.WriteLine($"Phone: {ContactInfo.Phone}");
+            Console.WriteLine($"Address: {ContactInfo.Address}");
+            Console.WriteLine($"Country ID: {ContactInfo.CountryID}");
+        }
+        static void PrintMainMenu()
+        {
+            Console.WriteLine("=================================");
+            Console.WriteLine("        Contacts Manager");
+            Console.WriteLine("=================================");
+            Console.WriteLine(" 1. Print All Contacts");
+            Console.WriteLine(" 2. Print Contacts By First Name");
+            Console.WriteLine(" 3. Print Contacts By First Name And Country");
+            Console.WriteLine(" 4. Search Contacts - Starts With");
+            Console.WriteLine(" 5. Search Contacts - Ends With");
+            Console.WriteLine(" 6. Search Contacts - Contains");
+            Console.WriteLine(" 7. Get First Name By ID");
+            Console.WriteLine(" 8. Find Contact By ID");
+            Console.WriteLine(" 9. Add New Contact");
+            Console.WriteLine("10. Add New Contact And Get ID");
+            Console.WriteLine("11. Update Contact");
+            Console.WriteLine("12. Delete Contact");
+            Console.WriteLine("13. Delete Multiple Contacts");
+            Console.WriteLine(" 0. Exit");
+            Console.WriteLine("=================================");
+        }
+        static void MainMenu()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                PrintMainMenu();
+
+                Console.Write("Choose an option: ");
+                string choice = Console.ReadLine();
+
+                Console.Clear();
+
+                switch (choice)
+                {
+                    case "1":
+                        {
+                            Console.WriteLine("========== All Contacts ==========\n");
+
+                            PrintAllContacts();
+                            break;
+                        }
+
+                    case "2":
+                        {
+                            Console.Write("Enter First Name: ");
+                            string firstName = Console.ReadLine();
+
+                            Console.WriteLine("\n========== Search Results ==========\n");
+
+                            PrintAllContactsWithFirstName(firstName);
+                            break;
+                        }
+
+                    case "3":
+                        {
+                            Console.Write("Enter First Name: ");
+                            string firstName = Console.ReadLine();
+
+                            Console.Write("Enter Country ID: ");
+                            int countryID = Convert.ToInt32(Console.ReadLine());
+
+                            Console.WriteLine("\n========== Search Results ==========\n");
+
+                            PrintAllContactsWithFirstNameAndCountry(firstName, countryID);
+                            break;
+                        }
+
+                    case "4":
+                        {
+                            Console.Write("Enter text to search at the beginning: ");
+                            string startsWith = Console.ReadLine();
+
+                            Console.WriteLine("\n========== Search Results ==========\n");
+
+                            SearchContactsStartsWith(startsWith);
+                            break;
+                        }
+
+                    case "5":
+                        {
+                            Console.Write("Enter text to search at the end: ");
+                            string endsWith = Console.ReadLine();
+
+                            Console.WriteLine("\n========== Search Results ==========\n");
+
+                            SearchContactsEndsWith(endsWith);
+                            break;
+                        }
+
+                    case "6":
+                        {
+                            Console.Write("Enter text to search: ");
+                            string contains = Console.ReadLine();
+
+                            Console.WriteLine("\n========== Search Results ==========\n");
+
+                            SearchContactsContains(contains);
+                            break;
+                        }
+
+                    case "7":
+                        {
+                            Console.Write("Enter Contact ID: ");
+                            int contactID = Convert.ToInt32(Console.ReadLine());
+
+                            Console.WriteLine("\n========== Result ==========\n");
+
+                            Console.WriteLine($"First Name: {GetFirstName(contactID)}");
+                            break;
+                        }
+
+                    case "8":
+                        {
+                            Console.Write("Enter Contact ID: ");
+                            int contactID = Convert.ToInt32(Console.ReadLine());
+
+                            stContact contactInfo = new stContact();
+
+                            Console.WriteLine();
+
+                            if (FindContactByID(contactID, ref contactInfo))
+                            {
+                                PrintContactInfo(contactInfo);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Contact Not Found!");
+                            }
+
+                            break;
+                        }
+
+                    case "9":
+                        {
+                            Console.WriteLine("========== Add New Contact ==========\n");
+
+                            stContact contactInfo = ReadContactInfo();
+
+                            Console.Write("\nAre you sure you want to add this contact? (Y/N): ");
+                            string confirmation = Console.ReadLine();
+
+                            if (confirmation.ToUpper() == "Y")
+                            {
+                                Console.WriteLine("\n");
+                                AddNewContact(contactInfo);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOperation cancelled.");
+                            }
+
+                            break;
+                        }
+
+                    case "10":
+                        {
+                            Console.WriteLine("========== This operation will add a new contact and return its new ID ==========\n");
+
+                            stContact contactInfo = ReadContactInfo();
+
+                            Console.Write("\nAre you sure you want to add this contact? (Y/N): ");
+                            string confirmation = Console.ReadLine();
+
+                            if (confirmation.ToUpper() == "Y")
+                            {
+                                Console.WriteLine("\n");
+                                AddNewContactAndGetID(contactInfo);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOperation cancelled.");
+                            }
+
+                            break;
+                        }
+
+                    case "11":
+                        {
+                            Console.WriteLine("========== Update Contact ==========\n");
+
+                            Console.Write("Enter Contact ID to update: ");
+                            int contactID = Convert.ToInt32(Console.ReadLine());
+
+                            stContact contactInfo = ReadContactInfo();
+
+                            Console.Write("\nAre you sure you want to update this contact? (Y/N): ");
+                            string confirmation = Console.ReadLine();
+
+                            if (confirmation.ToUpper() == "Y")
+                            {
+                                Console.WriteLine("\n");
+                                UpdateContact(contactID, contactInfo);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOperation cancelled.");
+                            }
+
+                            break;
+                        }
+
+                    case "12":
+                        {
+                            Console.WriteLine("========== Delete Contact ==========\n");
+
+                            Console.Write("Enter Contact ID to delete: ");
+                            int contactID = Convert.ToInt32(Console.ReadLine());
+
+                            Console.Write($"\nAre you sure you want to delete Contact ID {contactID}? (Y/N): ");
+                            string confirmation = Console.ReadLine();
+
+                            if (confirmation.ToUpper() == "Y")
+                            {
+                                Console.WriteLine("\n");
+                                DeleteContact(contactID);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOperation cancelled.");
+                            }
+
+                            break;
+                        }
+
+                    case "13":
+                        {
+                            Console.WriteLine("========== Delete Multiple Contacts ==========\n");
+
+                            Console.Write("Enter Contact IDs separated by comma (e.g. 9,11): ");
+                            string contactIDs = Console.ReadLine();
+
+                            Console.Write($"\nAre you sure you want to delete these contacts ({contactIDs})? (Y/N): ");
+                            string confirmation = Console.ReadLine();
+
+                            if (confirmation.ToUpper() == "Y")
+                            {
+                                Console.WriteLine("\n");
+                                DeleteContacts(contactIDs);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nOperation cancelled.");
+                            }
+
+                            break;
+                        }
+
+                    case "0":
+                        {
+                            Console.WriteLine("Exiting...");
+                            return;
+                        }
+
+                    default:
+                        {
+                            Console.WriteLine("Invalid option. Please try again.");
+                            break;
+                        }
+                }
+
+                Console.WriteLine("\n=================================");
+                Console.WriteLine("Press any key to return to the main menu...");
+                Console.ReadKey();
+            }
+        }
         static void Main(string[] args)
         {
-
-            // PrintAllContacts();
-            // PrintAllContactsWithFirstName("mohammad");
-            //PrintAllContactsWithFirstNameAndCountry("mohammad", 1);
-            //SearchContactsStartsWith("D");
-            //SearchContactsEndsWith("d");
-            //SearchContactsContains("i");
-           // Console.WriteLine(GetFirstName(1));
-
-          /*  stContact ContactInfo = new stContact();
-            if (FindContactByID(1,ref ContactInfo))
-            {
-                Console.WriteLine($"\nContact ID: {ContactInfo.ID}");
-                Console.WriteLine($"Name: {ContactInfo.FirstName} {ContactInfo.LastName}");
-                Console.WriteLine($"Email: {ContactInfo.Email}");
-                Console.WriteLine($"Phone: {ContactInfo.Phone}");
-                Console.WriteLine($"Address: {ContactInfo.Address}");
-                Console.WriteLine($"Country ID: {ContactInfo.CountryID}");
-            }
-            else
-            {
-                Console.WriteLine("Contact Not Found!");
-            }
-          */
-
-          /* stContact contactInfo = new stContact();
-
-            contactInfo.ID = 1;
-            contactInfo.FirstName = "Ayman";
-            contactInfo.LastName = "Ahmad";
-            contactInfo.Email = "ayman.ahmad@gmail.com";
-            contactInfo.Phone = "05551234567";
-            contactInfo.Address = "Selcuklu, Konya, Turkiye";
-            contactInfo.CountryID = 5;
-
-            AddNewContact(contactInfo);
-           */
-
-          stContact contactInfo = new stContact();
-
-            /*  contactInfo.FirstName = "Omar";
-              contactInfo.LastName = "Khaled";
-              contactInfo.Email = "omar.khaled@gmail.com";
-              contactInfo.Phone = "05321234567";
-              contactInfo.Address = "Meram, Konya, Turkiye";
-              contactInfo.CountryID = 1;
-
-              AddNewContactAndGetID(contactInfo);
-            */
-
-            /*  contactInfo.FirstName = "Ali";
-            contactInfo.LastName = "Megas";
-            contactInfo.Email = "Max@Gmail.com";
-            contactInfo.Address = "US";
-            contactInfo.Phone = "1021588777";
-            contactInfo.CountryID = 3;
-
-            UpdateContact(18, contactInfo);
-          */
-
-            // DeleteContact(18);
-
-            DeleteContacts("9,11");
-
+            MainMenu();
         }
     }
 }
