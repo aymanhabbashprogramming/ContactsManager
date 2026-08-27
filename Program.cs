@@ -456,6 +456,36 @@ namespace ContactsManager
 
         }
 
+        static void DeleteContact(int ContactID)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            string query = @"DELETE FROM [Contacts] WHERE ContactID = @ContactID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@ContactID", ContactID);
+
+            try
+            {
+                connection.Open();
+                int RowsAffected = command.ExecuteNonQuery();
+
+                if (RowsAffected>0)
+                {
+                    Console.WriteLine("Contact deleted successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Contact not found. Deletion failed.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while deleting the contact: {ex.Message}");
+            }
+            connection.Close();
+        }
 
         static void Main(string[] args)
         {
@@ -509,7 +539,7 @@ namespace ContactsManager
               AddNewContactAndGetID(contactInfo);
             */
 
-            contactInfo.FirstName = "Ali";
+            /*  contactInfo.FirstName = "Ali";
             contactInfo.LastName = "Megas";
             contactInfo.Email = "Max@Gmail.com";
             contactInfo.Address = "US";
@@ -517,6 +547,11 @@ namespace ContactsManager
             contactInfo.CountryID = 3;
 
             UpdateContact(18, contactInfo);
+          */
+
+            DeleteContact(18);
+
+
 
         }
     }
