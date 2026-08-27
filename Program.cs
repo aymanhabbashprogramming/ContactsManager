@@ -373,6 +373,45 @@ namespace ContactsManager
             }
         }
 
+        static void AddNewContactAndGetID(stContact ContactInfo)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = @"INSERT INTO Contacts
+                        ([FirstName], [LastName], [Email], [Phone], [Address], [CountryID])
+                        VALUES (@firstName, @lastName, @email, @phoneNumber, @address, @country_id)
+                         select SCOPE_IDENTITY() ";
+
+                SqlCommand command = new SqlCommand(query, connection);
+
+                command.Parameters.AddWithValue("@firstName", ContactInfo.FirstName);
+                command.Parameters.AddWithValue("@lastName", ContactInfo.LastName);
+                command.Parameters.AddWithValue("@email", ContactInfo.Email);
+                command.Parameters.AddWithValue("@phoneNumber", ContactInfo.Phone);
+                command.Parameters.AddWithValue("@address", ContactInfo.Address);
+                command.Parameters.AddWithValue("@country_id", ContactInfo.CountryID);
+
+                try
+                {
+                    connection.Open();
+
+                    object result = command.ExecuteScalar();
+
+                    if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                        Console.WriteLine($"Newly inserted ID:{insertedID}");
+                    else
+                        Console.WriteLine("Failed to retrieve the inserted id");
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+                connection.Close();
+            }
+        }
+
 
         static void Main(string[] args)
         {
@@ -401,7 +440,7 @@ namespace ContactsManager
             }
           */
 
-            stContact contactInfo = new stContact();
+          /* stContact contactInfo = new stContact();
 
             contactInfo.ID = 1;
             contactInfo.FirstName = "Ayman";
@@ -412,6 +451,18 @@ namespace ContactsManager
             contactInfo.CountryID = 5;
 
             AddNewContact(contactInfo);
+           */
+
+          stContact contactInfo = new stContact();
+
+            contactInfo.FirstName = "Omar";
+            contactInfo.LastName = "Khaled";
+            contactInfo.Email = "omar.khaled@gmail.com";
+            contactInfo.Phone = "05321234567";
+            contactInfo.Address = "Meram, Konya, Turkiye";
+            contactInfo.CountryID = 1;
+
+            AddNewContactAndGetID(contactInfo);
 
         }
     }
